@@ -4,18 +4,13 @@ const Navbar = () => {
       <div className="flex-1">
         <a className="btn btn-ghost">
           <img
-            src="../../public/DevSync_White.png"
+            src="../../DevSync_White.png"
             alt="DevSync"
             className="h-32 w-auto"
           />
         </a>
       </div>
       <div className="flex gap-2">
-        {/* <input
-          type="text"
-          placeholder="Search"
-          className="input input-bordered w-24 md:w-auto"
-        /> */}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
