@@ -10,3 +10,5 @@
 - Add BrowserRouter(basename) -> Routes -> Route=/ Body > RouteChildren
 - Create an Outlet in Body Component
 - Create a Footer and place it on bottom of page
+- Implement Login Page and validations
+- Install axios
