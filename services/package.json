@@ -1,0 +1,24 @@
+{
+  "name": "devsync",
+  "version": "1.0.0",
+  "description": "Backend for devsync",
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "typescript"
+  ],
+  "license": "ISC",
+  "author": "NagaTarun",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.ts"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3"
+  }
+}
