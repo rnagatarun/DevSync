@@ -13,16 +13,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "backend": "npx nodemon --watch src --exec \"node --loader ts-node/esm\" src/app.ts",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "tsc && node dist/app.js"
   },
   "engines": {
     "node": ">=22.0.0"
   },
   "dependencies": {
     "express": "^5.1.0",
-    "mongodb": "^6.17.0"
+    "mongoose": "^8.15.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
