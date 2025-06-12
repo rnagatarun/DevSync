@@ -4,25 +4,20 @@ import { User } from './models/user.js';
 
 const app = express();
 const port = 3000;
+//Add middleware to handle data and make it json to javascript object
+app.use(express.json());
 
-app.post('/signup', async(req,res) => {
-  const user = new User({
-  "firstName": "Alice",
-  "lastName": "Smith",
-  "emailId": "alice.smith@example.com",
-  "password": "password123",
-  "age": 25,
-  "gender": "Female"
-})
-  try{
+app.post('/signup', async (req, res) => {
+  const user = new User(req.body);
+
+try {
     await user.save();
-    res.send("User Saved Successfully")
+    res.send("User Saved Successfully");
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    res.status(400).send("Error saving user: " + errorMessage);
   }
-  catch(error: unknown){
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      res.status(400).send("Error saving user: " + errorMessage);
-  }
-})
+});
 
 
 // Connect to the database
