@@ -3,11 +3,14 @@ import connectDB from './database.js';
 import { User } from './models/user.js';
 import bcrypt from 'bcrypt';
 import { validateSignUpData } from './utils/validation.js';
+import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 const port = 3000;
 //Add middleware to handle data and make it json to javascript object
 app.use(express.json());
+app.use(cookieParser());
 
 //SignUp Api
 app.post('/signup', async (req, res) => {
@@ -46,6 +49,11 @@ app.post('/login', async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
+      //Create a JWT Token
+      const Token = jwt.sign({ _id: user._id }, process.env.VITE_JSON_TOKEN_KEY as string);
+
+      //Add token to cookie and send response back to user
+      res.cookie("Token", Token);
       res.send("Login Successful")
     }
     else {
@@ -55,6 +63,29 @@ app.post('/login', async (req, res) => {
   catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     res.status(400).send("Error: " + errorMessage)
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const cookies = req.cookies;
+    const{Token} = cookies;
+
+    if(!Token){
+      throw new Error("Invalid Token, Login again")
+    }
+
+    const decodedMessage = await jwt.verify(Token, process.env.VITE_JSON_TOKEN_KEY as string) as jwt.JwtPayload;
+    const {_id} = decodedMessage;
+    const user = await User.findById(_id);
+
+    if(!user){
+      throw new Error("User does not exist");
+    }
+    res.send(user);
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Unknown error";
+    res.status(400).send("ERROR : " + errorMessage);
   }
 });
 
