@@ -1,83 +1,21 @@
 import express from 'express';
 import connectDB from './database.js';
 import { User } from './models/user.js';
-import bcrypt from 'bcrypt';
-import { validateSignUpData } from './utils/validation.js';
 import cookieParser from 'cookie-parser';
-import { userAuth } from './middlewares/auth.js';
-import { AuthenticatedRequest } from './types/express';
+import {authRouter} from './routes/auth.js';
+import {profileRouter} from './routes/profile.js';
+import {requestRouter} from './routes/request.js'
+
 
 const app = express();
 const port = 3000;
 //Add middleware to handle data and make it json to javascript object
 app.use(express.json());
 app.use(cookieParser());
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
 
-//SignUp Api
-app.post('/signup', async (req, res) => {
-
-  try {
-    // validate the data
-    validateSignUpData(req);
-    const { firstName, lastName, emailId, password } = req.body;
-
-    //Encrypt the password
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    //Create new instanceof the user model
-    const user = new User({
-      firstName,
-      lastName,
-      emailId,
-      password: passwordHash
-    });
-
-    await user.save();
-    res.send("User Saved Successfully");
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(400).send("Error saving user: " + errorMessage);
-  }
-});
-
-//SignIn Api
-app.post('/login', async (req, res) => {
-  try {
-    const { emailId, password } = req.body;
-    const user = await User.findOne({ emailId: emailId });
-    if (!user) {
-      throw new Error("Invalid Credentials");
-    }
-    console.log("Hehe: ",password)
-    console.log(user.validatePassword(password));
-    const isPasswordValid = await user.validatePassword(password);
-    if (isPasswordValid) {
-      //Create a JWT Token
-      const Token = await user.getJWT();
-      //Add token to cookie and send response back to user
-      res.cookie("Token", Token);
-      res.send("Login Successful")
-    }
-    else {
-      throw new Error("Invalid Credentials");
-    }
-  }
-  catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(400).send("Error: " + errorMessage)
-  }
-});
-
-//Profile Api with user from middleware
-app.get('/profile', userAuth, async (req: AuthenticatedRequest, res) => {
-  try {
-    res.send(req.user);
-  } 
-  catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    res.status(400).send("Error fetching profile: " + errorMessage);
-  }
-});
 
 //getUserByEmail Api
 app.get('/user', async (req, res) => {
