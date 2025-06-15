@@ -1,5 +1,29 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
+// Define interface for user methods
+interface IUserMethods {
+    getJWT(): Promise<string>;
+    validatePassword(password: string): Promise<string>;
+}
+
+// Define interface for user document
+interface IUser extends mongoose.Document {
+    firstName: string;
+    lastName?: string;
+    emailId: string;
+    password: string;
+    age?: number;
+    gender?: string;
+    photoUrl: string;
+    about: string;
+    skills: string[];
+}
+
+// Define the User model type
+type UserModel = mongoose.Model<IUser, object, IUserMethods>;
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -68,4 +92,21 @@ const userSchema = new mongoose.Schema({
     }
 );
 
-export const User = mongoose.model("User", userSchema);
+userSchema.methods.getJWT = async function (): Promise<string> {
+    const token = await jwt.sign(
+        { _id: this._id },
+        process.env.VITE_JSON_TOKEN_KEY as string,
+        { expiresIn: "1d" }
+    );
+    return token;
+};
+
+userSchema.methods.validatePassword = async function (passwordInputByUser: string) {
+    const passwordHash = this.password;
+    const isPasswordValid = await bcrypt.compare(passwordInputByUser, passwordHash);
+    return isPasswordValid
+};
+
+export const User = mongoose.model<IUser, UserModel>('User', userSchema);
+export type { IUser, IUserMethods };
+export default User;
