@@ -4,7 +4,6 @@ import { User } from './models/user.js';
 import bcrypt from 'bcrypt';
 import { validateSignUpData } from './utils/validation.js';
 import cookieParser from 'cookie-parser';
-import jwt from 'jsonwebtoken';
 import { userAuth } from './middlewares/auth.js';
 import { AuthenticatedRequest } from './types/express';
 
@@ -49,11 +48,12 @@ app.post('/login', async (req, res) => {
     if (!user) {
       throw new Error("Invalid Credentials");
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log("Hehe: ",password)
+    console.log(user.validatePassword(password));
+    const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
       //Create a JWT Token
-      const Token = jwt.sign({ _id: user._id }, process.env.VITE_JSON_TOKEN_KEY as string);
-
+      const Token = await user.getJWT();
       //Add token to cookie and send response back to user
       res.cookie("Token", Token);
       res.send("Login Successful")
