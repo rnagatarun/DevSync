@@ -13,9 +13,9 @@ export const validateSignUpData = (req: { body: SignUpRequestBody }) => {
         throw new Error("Name is not valid");
     }
     else if(!validator.isEmail(emailId)){
-        throw new Error("Invalid Credentials");
+        throw new Error("Invalid email format");
     }
-     else if(validator.isStrongPassword(password)){
-        throw new Error("Invalid Credentials");
+    else if(!validator.isStrongPassword(password)){
+        throw new Error("Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters");
     }
 }
