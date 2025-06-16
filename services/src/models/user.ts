@@ -110,6 +110,9 @@ userSchema.methods.validatePassword = async function (passwordInputByUser: strin
     return isPasswordValid
 };
 
+//Compund Index for firstName and lastName to identify user quickly
+userSchema.index({firstName: 1, lastName: 1});
+
 export const User = mongoose.model<IUser, UserModel>('User', userSchema);
 export type { IUser, IUserMethods };
 export default User;
