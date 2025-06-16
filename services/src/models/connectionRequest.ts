@@ -23,6 +23,9 @@ const connectionRequestSchema = new mongoose.Schema({
     }
 );
 
+//Create a compund index that makes query execute faster even with huge data in DB
+connectionRequestSchema.index({fromUserId: 1, toUserId: 1});
+
 //PreSave  to validate the request
 connectionRequestSchema.pre("save", function(next){
     // Check if user is sending request to their own account
