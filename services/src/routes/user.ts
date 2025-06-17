@@ -3,6 +3,7 @@ import { userAuth } from "../middlewares/auth";
 import { AuthenticatedRequest } from "../types/express";
 import connectionRequest from "../models/connectionRequest";
 import mongoose from "mongoose";
+import User from "../models/user";
 
 export const userRouter = express.Router();
 const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
@@ -61,5 +62,38 @@ userRouter.get("/user/connections", userAuth, async (req: AuthenticatedRequest, 
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         res.status(400).send("ERROR: " + errorMessage)
+    }
+});
+
+//Feed Api
+userRouter.get('/feed', userAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+        const loggedInUser = req.user;
+        if (!loggedInUser) {
+            res.status(401).send("Unauthorized: User not found");
+            return;
+        }
+
+        const connectionRequests = await connectionRequest.find({
+           $or: [{fromUserId: loggedInUser._id}, {toUserId: loggedInUser._id }],
+        }).select("fromUserId toUserId")
+
+        const hideUsersFromFeed = new Set();
+        connectionRequests.forEach((req) => {
+            hideUsersFromFeed.add(req.fromUserId.toString());
+            hideUsersFromFeed.add(req.toUserId.toString());
+        });
+
+        const users = await User.find({
+            $and: [
+               { _id: {$nin: Array.from(hideUsersFromFeed)}},
+               { _id: {$ne: loggedInUser._id}},
+            ],
+        }).select(USER_SAFE_DATA);
+
+        res.json({data: users});
+    }
+    catch {
+        res.status(404).send("Something went wrong")
     }
 });
