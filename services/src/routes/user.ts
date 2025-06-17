@@ -1,9 +1,9 @@
 import express from "express"
-import { userAuth } from "../middlewares/auth";
-import { AuthenticatedRequest } from "../types/express";
-import connectionRequest from "../models/connectionRequest";
+import { userAuth } from "../middlewares/auth.js";
+import { AuthenticatedRequest } from "../types/express.js";
+import connectionRequest from "../models/connectionRequest.js";
 import mongoose from "mongoose";
-import User from "../models/user";
+import User from "../models/user.js";
 
 export const userRouter = express.Router();
 const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
