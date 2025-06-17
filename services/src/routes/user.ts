@@ -69,13 +69,30 @@ userRouter.get("/user/connections", userAuth, async (req: AuthenticatedRequest, 
 userRouter.get('/feed', userAuth, async (req: AuthenticatedRequest, res) => {
     try {
         const loggedInUser = req.user;
+        const page = parseInt(req.query.page as string) || 1;
+        let limit = parseInt(req.query.limit as string) || 10;
+        limit = limit > 50 ? 50 : limit;
+
+        const skip = (page - 1) * limit;
+
         if (!loggedInUser) {
             res.status(401).send("Unauthorized: User not found");
             return;
         }
 
+        // Add input validation for query parameters
+        if (page < 1) {
+            res.status(400).send("Page number must be greater than 0");
+            return;
+        }
+
+        if (limit < 1 || limit > 50) {
+            res.status(400).send("Limit must be between 1 and 50");
+            return;
+        }
+
         const connectionRequests = await connectionRequest.find({
-           $or: [{fromUserId: loggedInUser._id}, {toUserId: loggedInUser._id }],
+            $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
         }).select("fromUserId toUserId")
 
         const hideUsersFromFeed = new Set();
@@ -86,12 +103,15 @@ userRouter.get('/feed', userAuth, async (req: AuthenticatedRequest, res) => {
 
         const users = await User.find({
             $and: [
-               { _id: {$nin: Array.from(hideUsersFromFeed)}},
-               { _id: {$ne: loggedInUser._id}},
+                { _id: { $nin: Array.from(hideUsersFromFeed) } },
+                { _id: { $ne: loggedInUser._id } },
             ],
-        }).select(USER_SAFE_DATA);
+        })
+            .select(USER_SAFE_DATA)
+            .skip(skip)
+            .limit(limit);
 
-        res.json({data: users});
+        res.json({ data: users });
     }
     catch {
         res.status(404).send("Something went wrong")
