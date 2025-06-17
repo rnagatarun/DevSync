@@ -36,17 +36,6 @@ app.get('/user', async (req, res) => {
   }
 });
 
-//Feed Api
-app.get('/feed', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  }
-  catch {
-    res.status(404).send("Something went wrong")
-  }
-});
-
 //Delete User Api
 app.delete('/user', async (req, res) => {
   const userId = req.body.userId;
