@@ -63,3 +63,43 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req: Auth
         return;
     }
 });
+
+requestRouter.post('/request/review/:status/:requestId', userAuth, async (req: AuthenticatedRequest, res): Promise<void> => {
+    try {
+        const loggedInUser  = req.user;
+        const status = req.params.status;
+        const requestId = req.params.requestId;
+        
+        //Validate Request status
+        const allowedStatus = ["accepted", "rejected"];
+        if (!allowedStatus.includes(status)) {
+            res.status(400).json({ message: "Invalid status type" + status });
+            return;
+        }
+
+        if (!loggedInUser || !loggedInUser._id) {
+            res.status(401).json({ message: "Unauthorized: User not found" });
+            return;
+        }
+
+        const connectionRequest = await ConnectionRequest.findOne({
+           _id: requestId,
+           toUserId: loggedInUser._id,
+           status: "intrested"
+        });
+
+        if(!connectionRequest){
+            res.status(404).json({message: "Connection request not found"});
+            return;
+        }
+        connectionRequest.status = status as "accepted" | "rejected";
+        const data = await connectionRequest.save();
+        res.json({message: "Connection request" + status, data});
+        return;
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(400).send("ERROR : " + errorMessage);
+        return;
+    }
+});
