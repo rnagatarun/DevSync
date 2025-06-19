@@ -1,15 +1,19 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addUser } from "../store/userSlice";
 
 const Login = () => {
-  const [email, setEmail] = useState<string>("");
+  const [emailId, setEmailId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const dispatch = useDispatch();
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:5173/login", {
-        email,
+      const response = await axios.post("http://localhost:3000/login", {
+        emailId,
         password,
       });
+      dispatch(addUser(response));
     } catch (error) {
       console.error(error);
     }
@@ -40,8 +44,8 @@ const Login = () => {
               <input
                 type="email"
                 placeholder="mail@site.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={emailId}
+                onChange={(e) => setEmailId(e.target.value)}
                 required
               />
             </label>
