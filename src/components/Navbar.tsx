@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="flex-1 flex justify-end">
         {user._id && (
           <div className="flex items-center gap-4">
-            <div className="py-4 text-center">Welcome {user.firstName}</div>
+            <div className="py-4 text-center">{user.firstName}</div>
             <div className="dropdown dropdown-end">
               <div
                 tabIndex={0}
