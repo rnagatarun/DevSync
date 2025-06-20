@@ -1,19 +1,35 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store/store.js";
+import { Link } from "react-router-dom";
+import { BASE_URL } from "../utils/constants.js";
+import axios from "axios";
+import { removeUser } from "../store/userSlice.js";
 
 const Navbar = () => {
   const user = useSelector((store: RootState) => store.user);
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
+      dispatch(removeUser())
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="navbar bg-base-300 shadow-sm">
       {/* Left section - Logo */}
       <div className="flex-none">
-        <a className="btn btn-ghost">
+        <Link to="/" className="btn btn-ghost">
           <img
             src="../../DevSync_White.png"
             alt="DevSync"
             className="h-32 w-auto"
           />
-        </a>
+        </Link>
       </div>
 
       {/* Right section - User info and avatar */}
@@ -30,7 +46,7 @@ const Navbar = () => {
                 <div className="w-10 rounded-full">
                   <img
                     alt="User Image"
-                    src= {user.photoUrl}
+                    src={user.photoUrl}
                     // "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                   />
                 </div>
@@ -40,16 +56,16 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <a className="justify-between">
+                  <Link to="/profile" className="justify-between">
                     Profile
                     <span className="badge">New</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a>Settings</a>
                 </li>
                 <li>
-                  <a>Logout</a>
+                  <a onClick={handleLogout}>Logout</a>
                 </li>
               </ul>
             </div>
