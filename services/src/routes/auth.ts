@@ -45,7 +45,13 @@ authRouter.post('/login', async (req, res) => {
       //Create a JWT Token
       const Token = await user.getJWT();
       //Add token to cookie and send response back to user
-      res.cookie("Token", Token);
+      res.cookie("Token", Token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 86400000, // 24 hours
+      });
       res.json({
         message: "Login Successful",
         data: user
