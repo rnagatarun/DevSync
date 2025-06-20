@@ -12,12 +12,16 @@ const Login = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
     try {
-      const response = await axios.post(BASE_URL+"/login", {
-        emailId,
-        password,
-      });
+      const response = await axios.post(
+        BASE_URL + "/login",
+        {
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
       dispatch(addUser(response.data.data));
-      return navigate('/')
+      return navigate("/");
     } catch (error) {
       console.error(error);
     }
@@ -101,7 +105,9 @@ const Login = () => {
             </p>
           </div>
           <div className="card-actions justify-center">
-            <button className="btn btn-primary" onClick={handleLogin}>Sign In</button>
+            <button className="btn btn-primary" onClick={handleLogin}>
+              Sign In
+            </button>
           </div>
         </div>
       </div>
