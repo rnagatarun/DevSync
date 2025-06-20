@@ -8,6 +8,7 @@ import { BASE_URL } from "../utils/constants";
 const Login = () => {
   const [emailId, setEmailId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogin = async () => {
@@ -22,10 +23,11 @@ const Login = () => {
       );
       dispatch(addUser(response.data.data));
       return navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  } catch (error: any) {
+    setError(error.errorMessage || "Invalid Credentials")
+  }
+
+};
   return (
     <div className="flex justify-around my-[10%]">
       <div className="card bg-base-300 w-96 shadow-sm">
@@ -96,14 +98,8 @@ const Login = () => {
                 title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
               />
             </label>
-            <p className="validator-hint hidden">
-              Must be more than 8 characters, including
-              <br />
-              At least one number <br />
-              At least one lowercase letter <br />
-              At least one uppercase letter
-            </p>
           </div>
+          <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center">
             <button className="btn btn-primary" onClick={handleLogin}>
               Sign In
