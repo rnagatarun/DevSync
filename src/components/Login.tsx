@@ -23,6 +23,7 @@ const Login = () => {
       );
       dispatch(addUser(response.data.data));
       return navigate("/");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     setError(error.errorMessage || "Invalid Credentials")
   }
