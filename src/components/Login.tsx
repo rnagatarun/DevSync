@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
 
 const Login = () => {
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [emailId, setEmailId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoginForm, setIsLoginForm] = useState<boolean>(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogin = async () => {
@@ -23,17 +26,97 @@ const Login = () => {
       );
       dispatch(addUser(response.data.data));
       return navigate("/");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    setError(error.errorMessage || "Invalid Credentials")
-  }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.errorMessage || "Invalid Credentials");
+    }
+  };
 
-};
+  const handleSignUp = async () => {
+    try {
+      const response = await axios.post(
+        BASE_URL + "/signup",
+        {
+          firstName,
+          lastName,
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(response.data.data));
+      return navigate("/profile");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.errorMessage || "Invalid Credentials");
+    }
+  };
+
   return (
     <div className="flex justify-around my-[10%]">
       <div className="card bg-base-300 w-96 shadow-sm">
         <div className="card-body flex flex-col gap-6">
-          <h2 className="card-title">Login</h2>
+          <h2 className="card-title">{isLoginForm ? "Login" : "Sign Up"}</h2>
+          {!isLoginForm && (
+            <>
+              <div className="FirstName">
+                <label className="input validator">
+                  <svg
+                    className="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      strokeWidth="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </g>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    minLength={4}
+                    maxLength={50}
+                  />
+                </label>
+              </div>
+              <div className="LastName">
+                <label className="input validator">
+                  <svg
+                    className="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      strokeWidth="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </g>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+            </>
+          )}
           <div className="Email">
             <label className="input validator">
               <svg
@@ -102,10 +185,15 @@ const Login = () => {
           </div>
           <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center">
-            <button className="btn btn-primary" onClick={handleLogin}>
-              Sign In
+            <button className="btn btn-primary" onClick={isLoginForm ? handleLogin : handleSignUp}>
+              {isLoginForm ? "Sign In" : "Sign Up"}
             </button>
           </div>
+          <p className="m-auto cursor-pointer py-2" onClick={() => setIsLoginForm((value) => !value)}>
+            {isLoginForm
+              ? "New User? Signup Here"
+              : "Existing User? Login Here"}
+          </p>
         </div>
       </div>
     </div>
