@@ -37,7 +37,7 @@ const UserCard = ({ user }: { user: UserProps }) => {
         <div className="card-actions justify-center my-4">
           <button
             className="btn btn-primary"
-            onClick={() => handleSendRequest("ignored", _id)}
+            onClick={() => handleSendRequest("ignore", _id)}
           >
             Ignore
           </button>
