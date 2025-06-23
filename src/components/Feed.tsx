@@ -5,9 +5,10 @@ import { BASE_URL } from "../utils/constants";
 import { addFeed } from "../store/feedSlice";
 import { useEffect } from "react";
 import UserCard from "./UserCard";
+import type { UserProps } from "../types/userprops";
 
 const Feed = () => {
-  const feed = useSelector((store: RootState) => store.feed);
+  const feed = useSelector((store: RootState) => store.feed) as UserProps[] | null;
   const dispatch = useDispatch();
 
   const getFeed = async () => {
@@ -24,11 +25,14 @@ const Feed = () => {
 
   useEffect(() => {
     getFeed();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if(!feed) return;
+  if(feed.length <=0) return <h1 className="flex justify-center my-10">No new Users Found!!</h1>
   return (
     <div className="flex justify-center my-10">
-      {feed && feed[0] && <UserCard user={feed[0]} />}
+      <UserCard user={feed[0]} />
     </div>
   );
 };
