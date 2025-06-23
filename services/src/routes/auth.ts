@@ -24,8 +24,20 @@ authRouter.post('/signup', async (req, res) => {
       password: passwordHash
     });
 
-    await user.save();
-    res.send("User Saved Successfully");
+    const savedUser = await user.save();
+    const Token = await savedUser .getJWT();
+    //Add token to cookie and send response back to user
+    res.cookie("Token", Token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 86400000, // 24 hours
+    });
+    res.json({
+      message: "User Saved Successfully",
+      data: savedUser
+    });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     res.status(400).send("Error saving user: " + errorMessage);
