@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { Request } from "../types/request";
+
+interface Request {
+  _id: string;
+}
 
 const requestSlice = createSlice({
   name: "requests",
@@ -7,7 +10,8 @@ const requestSlice = createSlice({
   reducers: {
     addRequests: (state, action) => action.payload,
     removeRequest: (state, action) => {
-      return state.filter((r) => r._id !== action.payload);
+      const newArray = state.filter((r) => r._id !== action.payload);
+      return newArray;
     },
   },
 });
