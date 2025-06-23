@@ -1,14 +1,26 @@
-interface UserProps {
-  firstName: string;
-  lastName: string;
-  photoUrl: string;
-  age: number;
-  gender: string;
-  about: string;
-}
+import { useDispatch } from "react-redux";
+import type { UserProps } from "../types/userprops";
+import axios from "axios";
+import { removeUserFromFeed } from "../store/feedSlice";
+import { BASE_URL } from "../utils/constants";
 
 const UserCard = ({ user }: { user: UserProps }) => {
-  const { firstName, lastName, photoUrl, age, gender, about } = user;
+  const dispatch = useDispatch();
+  const { _id, firstName, lastName, photoUrl, age, gender, about } = user;
+
+  const handleSendRequest = async (status: string, userId: string) => {
+    try {
+      await axios.post(
+        BASE_URL + "/request/send/" + status + "/" + userId,
+        {},
+        { withCredentials: true }
+      );
+      dispatch(removeUserFromFeed(userId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="card bg-base-300 w-80 shadow-xl">
       <figure>
@@ -31,7 +43,7 @@ const UserCard = ({ user }: { user: UserProps }) => {
           </button>
           <button
             className="btn btn-secondary"
-            onClick={() => handleSendRequest("interested", _id)}
+            onClick={() => handleSendRequest("intrested", _id)}
           >
             Interested
           </button>
