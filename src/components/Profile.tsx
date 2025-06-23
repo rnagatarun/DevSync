@@ -1,5 +1,5 @@
 import type { RootState } from "../store/store";
-import type { UserProps } from "../utils/interface";
+import type { UserProps } from "../types/userprops";
 import EditProfile from "./EditProfile";
 import { useSelector } from "react-redux";
 

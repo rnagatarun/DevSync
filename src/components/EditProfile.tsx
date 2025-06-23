@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { UserProps } from "../utils/interface";
+import type { UserProps } from "../types/userprops";
 import UserCard from "./UserCard";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
