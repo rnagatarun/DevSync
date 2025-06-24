@@ -1,1 +1,1 @@
-export const BASE_URL = "https://devsync-1w0m.onrender.com/api"
+export const BASE_URL = "https://devsync-1w0m.onrender.com"
