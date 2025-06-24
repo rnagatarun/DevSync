@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import connectDB from './database.js';
 import { User } from './models/user.js';
@@ -8,9 +9,12 @@ import { requestRouter } from './routes/request.js';
 import { userRouter } from './routes/user.js';
 import cors from 'cors';
 
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
-const port = 3000;
+// Use PORT from environment variable for Render compatibility, default to 3000 for local development
+const port = process.env.PORT || 3000;
 //Add middleware to handle data and make it json to javascript object
 app.use(cors({
   origin: "http://localhost:5173",
