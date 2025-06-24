@@ -1,1 +1,1 @@
-export const BASE_URL = "https://devsyncc.me"
+export const BASE_URL = "https://devsyncc.me/api"
