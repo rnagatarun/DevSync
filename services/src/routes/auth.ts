@@ -30,7 +30,7 @@ authRouter.post('/signup', async (req, res) => {
     res.cookie("Token", Token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
       path: "/",
       maxAge: 86400000, // 24 hours
     });
@@ -59,8 +59,8 @@ authRouter.post('/login', async (req, res) => {
       //Add token to cookie and send response back to user
       res.cookie("Token", Token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
         path: "/",
         maxAge: 86400000, // 24 hours
       });
