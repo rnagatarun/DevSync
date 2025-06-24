@@ -17,16 +17,16 @@ const app = express();
 const port = process.env.PORT || 3000;
 //Add middleware to handle data and make it json to javascript object
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://devsyncc.me",
   credentials: true
 })
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use("/", authRouter);
-app.use("/", profileRouter);
-app.use("/", requestRouter);
-app.use("/", userRouter);
+app.use("/api", authRouter);
+app.use("/api", profileRouter);
+app.use("/api", requestRouter);
+app.use("/api", userRouter);
 
 
 //getUserByEmail Api
